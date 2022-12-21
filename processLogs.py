@@ -62,3 +62,6 @@ def record():
                     for t in tokenizedLines:
                         newLine += t + " "
                     log.write(newLine+'\n')
+
+if __name__=="__main__":
+    record()
