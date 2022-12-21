@@ -9,3 +9,5 @@ I have set up a receiving station because I am curious about discovering which l
 Essentially, the WSJT-X program logs each signal that it receives to a file called ALL.TXT. All that I want is to be able to view which stations I've received. To do this, I'll simply place any WSJT-X file I want to log into /toBeProcessed and run `python processLogs.py`. From there... who knows? Maybe I'll figure out some pythonic way of mapping these--after all, the FT8 mode does force CQ'ers to give their approximate location on a global grid.
 
 # How to run:
+1. Insert a WSJT-X ALL.TXT file into "toBeProcessed"
+2. `python processLogs.py`
