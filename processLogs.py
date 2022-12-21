@@ -6,7 +6,13 @@
 
 import os
 
+fullLog = 'fullLog.txt'
 directory = 'toBeProcessed'
+
+if not os.path.isfile('fullLog.txt'):
+    with open(fullLog, 'a') as log:
+        log.write('All Recorded FT8 CQs:')
+
 for filename in os.listdir(directory):
     f = os.path.join(directory, filename)
     if os.path.isfile(f):
@@ -28,7 +34,7 @@ for filename in os.listdir(directory):
             
             # now we only have FT8 CQ calls.
             # we'll append these to our fullLog.txt
-            with open('fullLog.txt', 'a') as log:
+            with open(fullLog, 'a') as log:
                 newLine = ""
                 for t in tokenizedLines:
                     newLine += t + " "
