@@ -5,9 +5,13 @@
 # big file named fullLog.txt
 
 import os
+import sys
+import pandas as pd
+import plotly.express as pl
 
+fullLog = 'fullLog.txt'
 
-def locator_to_latlong (locator):
+def locator_to_latlong(locator):
     # Found this in a python repo called "pyhamtools"
     locator = locator.upper()
     if len(locator) == 5 or len(locator) < 4:
@@ -15,6 +19,7 @@ def locator_to_latlong (locator):
     if ord(locator[0]) > ord('R') or ord(locator[0]) < ord('A'):
         raise ValueError
     if ord(locator[1]) > ord('R') or ord(locator[1]) < ord('A'):
+        print(locator)
         raise ValueError
     if ord(locator[2]) > ord('9') or ord(locator[2]) < ord('0'):
         raise ValueError
@@ -42,8 +47,31 @@ def locator_to_latlong (locator):
     return latitude, longitude
 
 
+def plot():
+    uniqueGridLocations = []
+    with open(fullLog) as file:
+        lines = file.readlines()[1:]
+        for line in lines:
+            tokenizedLines = line.split()
+            # check for weirdness: we should have exactly 10 tokens
+            if len(tokenizedLines) != 10:
+                continue
+            if tokenizedLines[3] != 'FT8':
+                continue
+            gridLocation = tokenizedLines[9]
+            if gridLocation not in uniqueGridLocations:
+                if len(gridLocation) == 4:
+                    uniqueGridLocations.append(gridLocation)
+    # uniqueGridLocations is now a list of *all* unique grid locations.
+    # we simply want to convert those to latlongs now:
+    df = pd.DataFrame([{'lat': x, 'lon': y} for x,y in [locator_to_latlong(pos) for pos in uniqueGridLocations]])
+    #print(df)
+
+    # and show the plot:
+    plot = pl.scatter_geo(df, lat="lat", lon="lon")
+    plot.show()
+
 def record():
-    fullLog = 'fullLog.txt'
     directory = 'toBeProcessed'
 
     if not os.path.isfile('fullLog.txt'):
@@ -101,3 +129,11 @@ def record():
 
 if __name__=="__main__":
     record()
+
+    # include a "t" somewhere in your first command line arg in order to
+    # see a plot of heard cq's!
+    if len(sys.argv) > 1:
+        if ('t' in sys.argv[1].lower()):
+            pass # we want to plot things on a map in this case!
+            print("Plotting points")
+            plot()

@@ -11,3 +11,11 @@ Essentially, the WSJT-X program logs each signal that it receives to a file call
 # How to run:
 1. Insert a WSJT-X ALL.TXT file into "toBeProcessed"
 2. `python processLogs.py`
+
+Alternatively, one can write `python processLogs.py true` in order to both perform the process _and_ to view all known cq locations on a plot!
+
+# Requirements:
+1. pandas
+2. plotly
+
+Both of these requirements are only for displaying the plot, however. If one can't/doesn't want to use this functionality, just delete the plot() function and remove the import statements for these libraries
