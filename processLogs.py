@@ -67,9 +67,14 @@ def plot():
     df = pd.DataFrame([{'lat': x, 'lon': y} for x,y in [locator_to_latlong(pos) for pos in uniqueGridLocations]])
     #print(df)
 
-    # and show the plot:
+    # plot:
     plot = pl.scatter_geo(df, lat="lat", lon="lon")
-    plot.show()
+
+    # and here we have a couple options. The first will show the plot in your
+    # browser, in a cool zoomable format. Unfortunately, I've had some
+    # issues? The second just outputs a png. Easy.
+    #plot.show()
+    plot.write_image("map.png")
 
 def record():
     directory = 'toBeProcessed'

@@ -12,7 +12,7 @@ Essentially, the WSJT-X program logs each signal that it receives to a file call
 1. Insert a WSJT-X ALL.TXT file into "toBeProcessed"
 2. `python processLogs.py`
 
-Alternatively, one can write `python processLogs.py true` in order to both perform the process _and_ to view all known cq locations on a plot!
+Alternatively, one can write `python processLogs.py true` in order to both perform the process _and_ to view all known cq locations on a plot! I've included a sample photo, map.png, of locations I've heard CQs from in my bedroom using the standard RTL-SDR blog v3. Surprisingly, I can frequently hear across the Atlantic using just the standard dipole antenna!
 
 # Requirements:
 1. pandas
