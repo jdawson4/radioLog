@@ -6,6 +6,42 @@
 
 import os
 
+
+def locator_to_latlong (locator):
+    # Found this in a python repo called "pyhamtools"
+    locator = locator.upper()
+    if len(locator) == 5 or len(locator) < 4:
+        raise ValueError
+    if ord(locator[0]) > ord('R') or ord(locator[0]) < ord('A'):
+        raise ValueError
+    if ord(locator[1]) > ord('R') or ord(locator[1]) < ord('A'):
+        raise ValueError
+    if ord(locator[2]) > ord('9') or ord(locator[2]) < ord('0'):
+        raise ValueError
+    if ord(locator[3]) > ord('9') or ord(locator[3]) < ord('0'):
+        raise ValueError
+    if len(locator) == 6:
+        if ord(locator[4]) > ord('X') or ord(locator[4]) < ord('A'):
+            raise ValueError
+        if ord (locator[5]) > ord('X') or ord(locator[5]) < ord('A'):
+            raise ValueError
+    longitude = (ord(locator[0]) - ord('A')) * 20 - 180
+    latitude = (ord(locator[1]) - ord('A')) * 10 - 90
+    longitude += (ord(locator[2]) - ord('0')) * 2
+    latitude += (ord(locator[3]) - ord('0'))
+    if len(locator) == 6:
+        longitude += ((ord(locator[4])) - ord('A')) * (2 / 24)
+        latitude += ((ord(locator[5])) - ord('A')) * (1 / 24)
+        # move to center of subsquare
+        longitude += 1 / 24
+        latitude += 0.5 / 24
+    else:
+        # move to center of square
+        longitude += 1;
+        latitude += 0.5;
+    return latitude, longitude
+
+
 def record():
     fullLog = 'fullLog.txt'
     directory = 'toBeProcessed'
