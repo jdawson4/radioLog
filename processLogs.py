@@ -58,7 +58,7 @@ def record():
             tokenizedLines = line.split()
             if tokenizedLines[3]!='FT8':
                 continue
-            station = tokenizedLines[7]
+            station = tokenizedLines[8]
             if station not in uniqueStations:
                 uniqueStations.append(station)
 
