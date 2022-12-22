@@ -2,14 +2,14 @@
 #
 # All that we're doing in this file is taking the logs in toBeProcessed and
 # adding any unique stations (who have called CQ--that's important!) to the
-# big file named fullLog.txt
+# big file named allCQs.txt
 
 import os
 import sys
 import pandas as pd
 import plotly.express as pl
 
-fullLog = 'fullLog.txt'
+allCQs = 'allCQs.txt'
 
 def locator_to_latlong(locator):
     # Found this in a python repo called "pyhamtools"
@@ -49,7 +49,7 @@ def locator_to_latlong(locator):
 
 def plot():
     uniqueGridLocations = []
-    with open(fullLog) as file:
+    with open(allCQs) as file:
         lines = file.readlines()[1:]
         for line in lines:
             tokenizedLines = line.split()
@@ -79,13 +79,13 @@ def plot():
 def record():
     directory = 'toBeProcessed'
 
-    if not os.path.isfile('fullLog.txt'):
-        with open(fullLog, 'a') as log:
+    if not os.path.isfile('allCQs.txt'):
+        with open(allCQs, 'a') as log:
             log.write('All Recorded FT8 CQs:\n')
 
     # first we need to figure out which stations we've already logged
     uniqueStations = []
-    with open(fullLog) as file:
+    with open(allCQs) as file:
         lines = file.readlines()[1:]
         for line in lines:
             tokenizedLines = line.split()
@@ -125,8 +125,8 @@ def record():
                     uniqueStations.append(station)
                 
                 # now we only have unique FT8 CQ calls.
-                # we'll append these to our fullLog.txt
-                with open(fullLog, 'a') as log:
+                # we'll append these to our allCQs.txt
+                with open(allCQs, 'a') as log:
                     newLine = ""
                     for t in tokenizedLines:
                         newLine += t + " "
