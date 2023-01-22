@@ -1,8 +1,7 @@
 # Author: Jacob Dawson
 #
 # All that we're doing in this file is taking the logs in toBeProcessed and
-# adding any unique stations (who have called CQ--that's important!) to the
-# big file named allCQs.txt
+# adding any unique grid locations to the big file named allGrids.txt
 
 import os
 import sys
@@ -10,6 +9,7 @@ import pandas as pd
 import plotly.express as pl
 
 allCQs = 'allCQs.txt'
+allGridSquares = 'allGridSquares.txt'
 
 def locator_to_latlong(locator):
     # Found this in a python repo called "pyhamtools"
@@ -46,19 +46,34 @@ def locator_to_latlong(locator):
         latitude += 0.5;
     return latitude, longitude
 
+def isGridLocation(gridString):
+    # checks this item fits the definition of a ham grid rectangle. Hams
+    # identify their location using a grid location like "EM64". The ARRL
+    # website says these have "two letters (the field) and two numbers
+    # (the square)"
+    letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    numbers = "1234567890"
+    if len(gridString) != 4:
+        return False
+    if (gridString[0] not in letters) or (gridString[1] not in letters):
+        return False
+    if (gridString[2] not in numbers) or (gridString[3] not in numbers):
+        return False
+    return True # exhausting all other alternatives, return true
 
 def plot():
     uniqueGridLocations = []
-    with open(allCQs) as file:
+    with open(allGridSquares) as file:
         lines = file.readlines()[1:]
         for line in lines:
             tokenizedLines = line.split()
-            # check for weirdness: we should have exactly 10 tokens
+            # check for weirdness:
             if len(tokenizedLines) != 10:
                 continue
             if tokenizedLines[3] != 'FT8':
                 continue
-            gridLocation = tokenizedLines[9]
+            if isGridLocation(tokenizedLines[9]):
+                gridLocation = tokenizedLines[9]
             if gridLocation not in uniqueGridLocations:
                 if len(gridLocation) == 4:
                     uniqueGridLocations.append(gridLocation)
@@ -76,10 +91,10 @@ def plot():
     #plot.show()
     plot.write_image("map.png")
 
-def record():
+def recordUniqueCQs():
     directory = 'toBeProcessed'
 
-    if not os.path.isfile('allCQs.txt'):
+    if not os.path.isfile(allCQs):
         with open(allCQs, 'a') as log:
             log.write('All Recorded FT8 CQs:\n')
 
@@ -132,11 +147,67 @@ def record():
                         newLine += t + " "
                     log.write(newLine[:-1]+'\n')
 
+def recordUniqueGridSquares():
+    directory = 'toBeProcessed'
+
+    if not os.path.isfile(allGridSquares):
+        with open(allGridSquares, 'a') as log:
+            log.write('All Recorded FT8 grid squares:\n')
+
+    # first we need to figure out which stations we've already logged
+    uniqueSquares = []
+    with open(allGridSquares) as file:
+        lines = file.readlines()[1:]
+        for line in lines:
+            tokenizedLines = line.split()
+            if tokenizedLines[3]!='FT8':
+                continue
+            square = tokenizedLines[9]
+            if square not in uniqueSquares:
+                uniqueSquares.append(square)
+
+    for filename in os.listdir(directory):
+        f = os.path.join(directory, filename)
+        if os.path.isfile(f):
+            print('Processing', f)
+            with open(f) as file:
+                lines = file.readlines()
+            for line in lines:
+                tokenizedLines = line.split()
+
+                # check for weirdness: we should have exactly 10 tokens
+                if len(tokenizedLines) != 10:
+                    continue
+
+                # note: we only want FT8 signals:
+                if tokenizedLines[3]!='FT8':
+                    continue
+                if isGridLocation(tokenizedLines[9]):
+                    square = tokenizedLines[9]
+                else:
+                    continue
+                # we also want to ignore stations we've already logged:
+                if square in uniqueSquares:
+                    continue
+                else:
+                    uniqueSquares.append(square)
+                
+                # now we only have unique FT8 CQ calls.
+                # we'll append these to our allCQs.txt
+                with open(allGridSquares, 'a') as log:
+                    newLine = ""
+                    for t in tokenizedLines:
+                        newLine += t + " "
+                    log.write(newLine[:-1]+'\n')
+
 if __name__=="__main__":
-    record()
+    # we're gonna make two types of files: recording unique CQs, and recording
+    # unique gridsquares
+    recordUniqueCQs()
+    recordUniqueGridSquares()
 
     # include a "t" somewhere in your first command line arg in order to
-    # see a plot of heard cq's!
+    # see a plot of locations we've heard!
     if len(sys.argv) > 1:
         if ('t' in sys.argv[1].lower()):
             pass # we want to plot things on a map in this case!
