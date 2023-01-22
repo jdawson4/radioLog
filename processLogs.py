@@ -74,13 +74,13 @@ def plot():
                 continue
             if isGridLocation(tokenizedLines[9]):
                 gridLocation = tokenizedLines[9]
+            else:
+                continue
             if gridLocation not in uniqueGridLocations:
-                if len(gridLocation) == 4:
-                    uniqueGridLocations.append(gridLocation)
+                uniqueGridLocations.append(gridLocation)
     # uniqueGridLocations is now a list of *all* unique grid locations.
     # we simply want to convert those to latlongs now:
     df = pd.DataFrame([{'lat': x, 'lon': y} for x,y in [locator_to_latlong(pos) for pos in uniqueGridLocations]])
-    #print(df)
 
     # plot:
     plot = pl.scatter_geo(df, lat="lat", lon="lon")
