@@ -89,7 +89,7 @@ def plot():
     # browser, in a cool zoomable format. Unfortunately, I've had some
     # issues? The second just outputs a png. Easy.
     #plot.show()
-    plot.write_image("map.png")
+    plot.write_image("map.png",scale=5.0)
 
 def recordUniqueCQs():
     directory = 'toBeProcessed'
