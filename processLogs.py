@@ -206,10 +206,6 @@ if __name__=="__main__":
     recordUniqueCQs()
     recordUniqueGridSquares()
 
-    # include a "t" somewhere in your first command line arg in order to
-    # see a plot of locations we've heard!
-    if len(sys.argv) > 1:
-        if ('t' in sys.argv[1].lower()):
-            pass # we want to plot things on a map in this case!
-            print("Plotting points")
-            plot()
+    print("Plotting points")
+    plot()
+            
